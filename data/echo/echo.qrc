@@ -1,0 +1,5 @@
+<RCC><qresource prefix="/echo">
+<file>inter-400.ttf</file><file>jura-600.ttf</file><file>arachna.svg</file>
+<file>echo.svg</file><file>echo.qss</file>
+<file>chevron-down.svg</file>
+</qresource></RCC>

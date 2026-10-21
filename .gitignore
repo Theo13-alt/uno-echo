@@ -1,0 +1,14 @@
+/build/
+/build-*/
+/dist/
+/release/
+/.build-tools/
+/.venv/
+__pycache__/
+*.pyc
+*.user
+*.autosave
+.vs/
+.vscode/
+.cache/
+compile_commands.json
