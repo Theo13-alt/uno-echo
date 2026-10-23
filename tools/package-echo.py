@@ -81,7 +81,7 @@ with zipfile.ZipFile(out / 'source.zip', 'w', zipfile.ZIP_DEFLATED) as archive:
         for path in (root / folder).rglob('*'):
             if path.is_file() and '.git' not in path.parts and path.name != '.git':
                 archive.write(path, path.relative_to(root))
-    for name in ('CMakeLists.txt', 'README.md', 'BUILDING.md', 'CREDITS.md', 'LICENSE', 'CHANGELOG.md', '.gitignore', '.gitattributes', 'src/compactmain.cpp', 'src/compactwindow.cpp', 'src/compactwindow.h', 'src/selection.cpp', 'src/selection.h', 'src/onlinetranslator.cpp', 'src/onlinetranslator.h'):
+    for name in ('CMakeLists.txt', 'README.md', 'BUILDING.md', 'CREDITS.md', 'LICENSE', 'CHANGELOG.md', '.gitignore', '.gitattributes', 'src/inputlayout.cpp', 'src/inputlayout.h', 'src/texttools.cpp', 'src/texttools.h', 'src/compactmain.cpp', 'src/compactwindow.cpp', 'src/compactwindow.h', 'src/selection.cpp', 'src/selection.h', 'src/onlinetranslator.cpp', 'src/onlinetranslator.h'):
         archive.write(root / name, name)
 archive = shutil.make_archive(str(out), 'zip', out.parent, out.name)
 print(f'Packaged {len(seen)} binaries: {archive}')

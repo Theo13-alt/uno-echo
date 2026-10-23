@@ -58,6 +58,10 @@ int main(int argc, char *argv[]) {
             window.findChild<QPushButton *>(QStringLiteral("aboutButton"))->click();
             window.findChild<QPushButton *>(QStringLiteral("serverSettingsButton"))->click();
         }
+        if (app.arguments().contains(QStringLiteral("--shortcuts"))) {
+            window.findChild<QPushButton *>(QStringLiteral("aboutButton"))->click();
+            window.findChild<QPushButton *>(QStringLiteral("shortcutSettingsButton"))->click();
+        }
         QComboBox *popupCombo = nullptr;
         if (app.arguments().contains(QStringLiteral("--engine-popup")))
             popupCombo = window.findChildren<QComboBox *>().at(1);
@@ -71,6 +75,7 @@ int main(int argc, char *argv[]) {
             QWidget *capture = &window;
             if (auto *about = window.findChild<QDialog *>(QStringLiteral("aboutDialog"))) capture = about;
             if (auto *server = window.findChild<QDialog *>(QStringLiteral("serverDialog"))) capture = server;
+            if (auto *shortcuts = window.findChild<QDialog *>(QStringLiteral("shortcutDialog"))) capture = shortcuts;
             if (QWidget *popup = QApplication::activePopupWidget()) capture = popup;
             if (index + 1 < app.arguments().size()) {
                 QPixmap snapshot = capture->grab();

@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 cmake_minimum_required(VERSION 3.16)
-project(uno-echo VERSION 1.0.4 LANGUAGES CXX)
+project(uno-echo VERSION 2.0.0 LANGUAGES CXX)
 if(NOT WIN32)
     message(FATAL_ERROR "UNO echo currently supports Windows only")
 endif()
@@ -14,7 +14,7 @@ set(QHOTKEY_INSTALL OFF CACHE BOOL "" FORCE)
 find_package(Qt6 REQUIRED COMPONENTS Widgets Network StateMachine Svg)
 add_subdirectory(src/3rdparty/qhotkey)
 add_executable(uno-echo WIN32
-    src/compactmain.cpp src/compactwindow.cpp src/compactwindow.h
+    src/compactmain.cpp src/compactwindow.cpp src/compactwindow.h src/texttools.cpp src/texttools.h src/inputlayout.cpp src/inputlayout.h
     src/onlinetranslator.cpp src/onlinetranslator.h
     src/selection.cpp src/selection.h data/echo/echo.qrc data/echo/echo.rc
 )
@@ -44,4 +44,21 @@ if(BUILD_TESTING)
         target_compile_options(echo-translator-test PRIVATE /utf-8)
     endif()
     add_test(NAME translator COMMAND echo-translator-test)
+    add_executable(echo-texttools-test tests/texttools_test.cpp src/texttools.cpp src/texttools.h)
+    target_include_directories(echo-texttools-test PRIVATE src)
+    target_link_libraries(echo-texttools-test PRIVATE Qt6::Core Qt6::Test)
+    if(MSVC)
+        target_compile_options(echo-texttools-test PRIVATE /utf-8)
+    endif()
+    add_test(NAME texttools COMMAND echo-texttools-test)
+    add_executable(echo-window-test tests/compactwindow_test.cpp
+        src/compactwindow.cpp src/compactwindow.h src/texttools.cpp src/texttools.h src/inputlayout.cpp src/inputlayout.h
+        src/selection.cpp src/selection.h src/onlinetranslator.cpp src/onlinetranslator.h data/echo/echo.qrc)
+    target_include_directories(echo-window-test PRIVATE src)
+    target_link_libraries(echo-window-test PRIVATE Qt6::Widgets Qt6::Network Qt6::StateMachine Qt6::Svg Qt6::Test QHotkey::QHotkey dwmapi)
+    target_compile_definitions(echo-window-test PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
+    if(MSVC)
+        target_compile_options(echo-window-test PRIVATE /utf-8)
+    endif()
+    add_test(NAME window COMMAND echo-window-test)
 endif()

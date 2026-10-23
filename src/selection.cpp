@@ -17,9 +17,10 @@ Selection::Selection() : m_timeout(new QTimer(this)) {
     connect(m_timeout, &QTimer::timeout, this, [this] { finish(QString()); });
     connect(QApplication::clipboard(), &QClipboard::dataChanged, this, &Selection::clipboardChanged);
 }
-void Selection::requestSelection() {
+void Selection::requestSelection(bool previousWord) {
     if (m_busy) return;
     m_busy = true; m_copySent = false;
+    m_previousWord = previousWord; m_wordSelected = false;
     m_target = reinterpret_cast<quintptr>(GetForegroundWindow());
     m_original.reset(new QMimeData);
     const auto *data = QApplication::clipboard()->mimeData();
@@ -35,6 +36,21 @@ void Selection::sendCopyShortcutWhenReady() {
     if ((GetAsyncKeyState(VK_CONTROL) | GetAsyncKeyState(VK_MENU) | GetAsyncKeyState(VK_SHIFT)
         | GetAsyncKeyState(VK_LWIN) | GetAsyncKeyState(VK_RWIN)) & 0x8000) {
         QTimer::singleShot(10, this, &Selection::sendCopyShortcutWhenReady); return;
+    }
+    if (m_previousWord && !m_wordSelected) {
+        // Use the source editor's own word boundary, at the caret. No text is deleted.
+        INPUT select[6]{};
+        for (auto &event : select) event.type = INPUT_KEYBOARD;
+        select[0].ki.wVk = VK_CONTROL; select[1].ki.wVk = VK_SHIFT;
+        // Extended arrow avoids NumLock keypad emulation releasing Shift.
+        select[2].ki.wVk = VK_LEFT; select[2].ki.dwFlags = KEYEVENTF_EXTENDEDKEY;
+        select[3].ki.wVk = VK_LEFT; select[3].ki.dwFlags = KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP;
+        select[4].ki.wVk = VK_SHIFT; select[4].ki.dwFlags = KEYEVENTF_KEYUP;
+        select[5].ki.wVk = VK_CONTROL; select[5].ki.dwFlags = KEYEVENTF_KEYUP;
+        if (SendInput(6, select, sizeof(INPUT)) != 6) { finish(QString()); return; }
+        m_wordSelected = true;
+        QTimer::singleShot(40, this, &Selection::sendCopyShortcutWhenReady);
+        return;
     }
     m_sequence = GetClipboardSequenceNumber();
     m_copySent = true;

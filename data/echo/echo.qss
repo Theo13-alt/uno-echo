@@ -29,3 +29,6 @@ QScrollBar::add-page, QScrollBar::sub-page { background: transparent; }
 QMenu { background: #211c29; border: 1px solid #3a3444; padding: 4px; }
 QMenu::item { padding: 8px 20px; }
 QMenu::item:selected { background: #382d49; }
+
+QLabel#toolsHint { color: #aaa3b0; font-size: 11px; }
+QKeySequenceEdit { background: #211c29; border: 1px solid #3a3444; border-radius: 6px; padding: 5px; }

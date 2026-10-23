@@ -16,7 +16,7 @@ class Selection : public QObject {
 public:
     ~Selection() override;
     static Selection &instance();
-    void requestSelection();
+    void requestSelection(bool previousWord = false);
 signals:
     void requestedSelectionAvailable(const QString &text);
 private:
@@ -32,5 +32,7 @@ private:
     unsigned long m_captureSequence = 0;
     bool m_busy = false;
     bool m_copySent = false;
+    bool m_previousWord = false;
+    bool m_wordSelected = false;
 };
 #endif
